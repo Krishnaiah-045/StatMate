@@ -1,16 +1,5 @@
-//PROJECT TITLE
-
-
-//StatMate: Modular Statistical Analyzer in C
-
-// Description of the project
-
-/*StatMate is a modular, menu-driven C program that performs fundamental statistical operations on integer arrays. 
-Designed with clarity and educational value in mind, this tool allows users to calculate sum, average, maximum, 
-minimum, mode, median, range, product, frequency, search results, variance,
-and standard deviation—all implemented manually without using built-in libraries.*/
-
 #include <stdio.h>
+#include <unistd.h>
 
 // Function Declarations
 void arr_read(int *, int);
@@ -28,22 +17,21 @@ void arr_search(int *, int, int);
 float arr_variance(int *, int, float);
 float arr_stddev(int *, int, float);
 float arr_sqrt(float);
+void operation_animation(const char *);
 
-
-// Main function
+// ---------- Main Function ----------
 int main() 
 {
     int n;
     char cont;
 
-    // Display a header with a unique style
     printf("\n***************************************************************\n");
     printf("*                                                             *\n");
     printf("*        🔢 SmartStat: Modular Statistical Analyzer in C      *\n");
     printf("*                                                             *\n");
     printf("***************************************************************\n\n");
 
-    // Input array size
+    // Input
     printf("👉 Please enter the size of the array: ");
     scanf("%d", &n);
     if (n <= 0) 
@@ -56,13 +44,12 @@ int main()
     printf("👉 Enter %d integer element(s) separated by space: ", n);
     arr_read(arr, n);
 
-    // Pre-computations
+    // Pre-compute stats
     int sum = arr_sum(arr, n);
     int max = arr_max(arr, n);
     int min = arr_min(arr, n);
     long long product = arr_pro(arr, n);
 
-    // Copy original array for sorting
     for (int i = 0; i < n; i++)
         sorted[i] = arr[i];
     sort_array(sorted, n);
@@ -71,7 +58,6 @@ int main()
     float variance = arr_variance(arr, n, average);
     float stddev = arr_stddev(arr, n, average);
 
-    // Main Operation Loop
     do 
     {
         int option;
@@ -94,34 +80,42 @@ int main()
         printf("👉 Enter your option (1-12): ");
         scanf("%d", &option);
 
-        // Process chosen option
         switch (option) {
             case 1:
+                operation_animation("Sum");
                 printf("\n🧮 Sum of elements: %d\n", sum);
                 break;
             case 2:
+                operation_animation("Average");
                 printf("\n📊 Average of elements: %.2f\n", average);
                 break;
             case 3:
+                operation_animation("Maximum");
                 printf("\n🔼 Maximum value: %d\n", max);
                 break;
             case 4:
+                operation_animation("Minimum");
                 printf("\n🔽 Minimum value: %d\n", min);
                 break;
             case 5:
+                operation_animation("Mode");
                 printf("\n🎯 Mode(s): ");
                 arr_mode(arr, n);
                 break;
             case 6:
+                operation_animation("Median");
                 printf("\n📈 Median value: %.2f\n", arr_median(sorted, n));
                 break;
             case 7:
+                operation_animation("Range");
                 printf("\n🔄 Range (Max - Min): %d\n", arr_range(max, min));
                 break;
             case 8:
+                operation_animation("Product");
                 printf("\n✖️ Product of elements: %lld\n", product);
                 break;
             case 9:
+                operation_animation("Frequency Table");
                 printf("\n📋 Frequency Table:\n");
                 arr_frequency(arr, n);
                 break;
@@ -130,38 +124,51 @@ int main()
                 int val;
                 printf("\n👉 Enter value to search: ");
                 scanf("%d", &val);
+                operation_animation("Search");
                 arr_search(arr, n, val);
                 break;
             }
             case 11:
+                operation_animation("Variance");
                 printf("\n📉 Variance: %.4f\n", variance);
                 break;
             case 12:
+                operation_animation("Standard Deviation");
                 printf("\n📐 Standard Deviation: %.4f\n", stddev);
                 break;
             default:
                 printf("\n❌ Invalid option! Please choose a number between 1 and 12.\n");
         }
 
-        // Validate response for repeating operation
         do {
             printf("\n🔄 Do you want to perform another operation? (y/n): ");
             scanf(" %c", &cont);
             if (cont != 'y' && cont != 'Y' && cont != 'n' && cont != 'N') 
-            {
                 printf("❌ Invalid input! Please enter 'y' or 'n'.\n");
-            }
         } while (cont != 'y' && cont != 'Y' && cont != 'n' && cont != 'N');
 
     } while (cont == 'y' || cont == 'Y');
 
     printf("\n✅ Thank you for using SmartStat! Stay curious & keep analyzing! 📊\n");
+    printf("\n");
     printf("***************************************************************\n");
     return 0;
 }
 
-// ---------- Function Definitions ----------
+// ---------- Animation Function ----------
+void operation_animation(const char *operation_name)
+{
+    printf("\n🔄 Processing \"%s\" Operation...\n", operation_name);
+    for (int i = 0; i <= 100; i++)
+    {
+        printf("[Loading... %d%%]\r", i);
+        fflush(stdout);
+        usleep(20000);
+    }
+    printf("[✅ %s Completed!]\n", operation_name);
+}
 
+// ---------- Statistical Functions ----------
 void arr_read(int *arr, int n) 
 {
     for (int i = 0; i < n; i++)
@@ -214,7 +221,6 @@ void arr_mode(int *arr, int n)
         printed[i] = 0;
     }
 
-    // Calculate frequency for each element
     for (int i = 0; i < n; i++) 
     {
         if (!printed[i]) 
@@ -235,7 +241,6 @@ void arr_mode(int *arr, int n)
         if (!printed[i] && freq[i] > max_count)
             max_count = freq[i];
 
-    // Output mode(s)
     for (int i = 0; i < n; i++) 
     {
         if (!printed[i] && freq[i] == max_count) 
@@ -331,7 +336,6 @@ float arr_variance(int *arr, int n, float avg)
 
 float arr_stddev(int *arr, int n, float avg) 
 {
-
     float var = arr_variance(arr, n, avg);
     return arr_sqrt(var);
 }
